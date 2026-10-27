@@ -74,7 +74,7 @@ Now let's grab the route URLs for the application, and download the pre-built ex
 ```bash
 export EDGE_URL=$(oc --namespace $NAMESPACE get route edge-server --output jsonpath='{.spec.host}')
 export SOCKETIO_URL=$(oc --namespace $NAMESPACE get route socketio-server --output jsonpath='{.spec.host}')
-curl -sSfL https://raw.githubusercontent.com/jmhbnz/workshops/main/data/security-new/setup/exercise4/exploit/payload.bin -o /tmp/payload.bin
+curl -sSfL https://raw.githubusercontent.com/waynedovey/workshops/main/data/security-new/setup/exercise4/exploit/payload.bin -o /tmp/payload.bin
 ```
 
 Now deliver the exploit payload to the edge server webhook:
@@ -102,7 +102,7 @@ If the exploit worked, you'll see output like:
 
 **The Socket.IO server has been compromised.** An attacker delivered arbitrary code through a pickle payload from outside the cluster. The server had no way to distinguish it from a legitimate inter-server message.
 
-> Take a minute to review the exploit source at [`exploit/poc.py`](https://github.com/jmhbnz/workshops/blob/main/data/security-new/setup/exercise4/exploit/poc.py) and the vulnerable server at [`socketio-server/server.py`](https://github.com/jmhbnz/workshops/blob/main/data/workshop/setup/exercise4/socketio-server/server.py). The server code itself looks completely normal. The vulnerability is in the `python-socketio` library's use of `pickle.loads()`.
+> Take a minute to review the exploit source at [`exploit/poc.py`](https://github.com/waynedovey/workshops/blob/main/data/security-new/setup/exercise4/exploit/poc.py) and the vulnerable server at [`socketio-server/server.py`](https://github.com/waynedovey/workshops/blob/main/data/security-new/setup/exercise4/socketio-server/server.py). The server code itself looks completely normal. The vulnerability is in the `python-socketio` library's use of `pickle.loads()`.
 
 
 ## 4.4 Harden the image
@@ -149,7 +149,7 @@ oc --namespace $NAMESPACE exec deploy/socketio-server -- rm -f /tmp/evidence/pwn
 Now let's address the exploit directly. Apply the hardened Socket.IO server deployment, which uses the Red Hat Hardened Images distroless Python image:
 
 ```bash
-curl -k --silent --fail --location "https://raw.githubusercontent.com/jmhbnz/workshops/main/data/security-new/setup/exercise4/k8s/socketio-server-hardened.yaml" \
+curl -k --silent --fail --location "https://raw.githubusercontent.com/waynedovey/workshops/main/data/security-new/setup/exercise4/k8s/socketio-server-hardened.yaml" \
   | sed "s/\${SUFFIX}/${SUFFIX}/g; s/\${NAMESPACE}/${NAMESPACE}/g" \
   | oc apply --filename -
 ```
